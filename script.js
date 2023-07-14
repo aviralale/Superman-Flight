@@ -46,9 +46,9 @@ function velocityIncrement() {
 
 velocityIncrement();
 
-// gameOverSound = new Audio('gameover.mp3');
+gameOverSound = new Audio('gameover.mp3');
 
-// jumpSound = new Audio('jump.mp3');
+jumpSound = new Audio('jump.mp3');
 
 
 
@@ -110,7 +110,7 @@ function update() {
         
         if (!pipe.passed && superman.x > pipe.x + pipe.width) {
             score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
-            jumpSound.volume = 0.2;
+            jumpSound.volume = 0;
             jumpSound.play();  
             pipe.passed = true;
             velocityIncrement();
@@ -133,7 +133,7 @@ function update() {
     context.fillText(score, 15, 45);
     
     if (gameOver) {
-        gameOverSound.play();
+        // gameOverSound.play();
         // Draw the image onto the canvas
         let  text = "Your score is " + score;
         let  textWidth = context.measureText(text).width;
