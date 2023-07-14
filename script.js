@@ -6,8 +6,8 @@ let boardHeight = window.innerHeight;
 let context;
 
 //superman
-let supermanWidth = 51; //width/height ratio = 408/228 = 17/12
-let supermanHeight = 36;
+let supermanWidth = 60; //width/height ratio = 408/228 = 17/12
+let supermanHeight = 30;
 let supermanX = boardWidth/8;
 let supermanY = boardHeight/2;
 let supermanImg;
@@ -67,9 +67,9 @@ window.onload = function() {
     
     //load images
     supermanImg = new Image();
-    supermanImg.style.maskImage = "url(./harrypott.png)";
+    supermanImg.style.maskImage = "url(./super-arcade-pixels.png)";
     supermanImg.style.maskSize = "cover";
-    supermanImg.src = "./harrypott.png";
+    supermanImg.src = "./super-arcade-pixels.png";
     supermanImg.onload = function() {
         context.drawImage(supermanImg, superman.x, superman.y, superman.width, superman.height);
     }
@@ -110,7 +110,7 @@ function update() {
         
         if (!pipe.passed && superman.x > pipe.x + pipe.width) {
             score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
-            jumpSound.volume = 0;
+            jumpSound.volume = 0.2;
             jumpSound.play();  
             pipe.passed = true;
             velocityIncrement();
@@ -133,7 +133,7 @@ function update() {
     context.fillText(score, 15, 45);
     
     if (gameOver) {
-        // gameOverSound.play();
+        gameOverSound.play();
         // Draw the image onto the canvas
         let  text = "Your score is " + score;
         let  textWidth = context.measureText(text).width;
