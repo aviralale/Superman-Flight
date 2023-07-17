@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>High Scores</title>
+  <link rel="stylesheet" type="text/css" href="highScores.css">
+</head>
+<body>
+    <div class="container">
+  <h1>High Scores</h1>
+  <ol id="highscores-list"></ol>
+</div>
+  <script>
+      window.onload = function () {
+          displayHighScores();
+        };
+        
+        function displayHighScores() {
+          const highscoresList = document.getElementById("highscores-list");
+        
+          // Get high scores from localStorage
+          const highScores = getHighScores();
+        
+          // Sort high scores by score in descending order
+          highScores.sort((a, b) => b.score - a.score);
+        
+          // Display high scores
+          for (let i = 0; i < highScores.length; i++) {
+            const scoreItem = document.createElement("li");
+            scoreItem.innerHTML = `${highScores[i].name}: ${highScores[i].score}`;
+            highscoresList.appendChild(scoreItem);
+          }
+        }
+        
+        function getHighScores() {
+          // Retrieve high scores from localStorage
+          const highScoresString = localStorage.getItem("highScores");
+        
+          if (highScoresString) {
+            return JSON.parse(highScoresString);
+          } else {
+            return [];
+          }
+        }
+        
+  </script>
+  <script src="highscores.js"></script>
+</body>
+</html>

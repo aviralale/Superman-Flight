@@ -1,11 +1,11 @@
-//board
+// board
 let board;
 let boardWidth = window.innerWidth;
 let boardHeight = window.innerHeight;
 let context;
 
-//superman
-let supermanWidth = 60; //width/height ratio = 408/228 = 17/12
+// superman
+let supermanWidth = 60; // width/height ratio = 408/228 = 17/12
 let supermanHeight = 30;
 let supermanX = boardWidth / 8;
 let supermanY = boardHeight / 2;
@@ -18,9 +18,9 @@ let superman = {
   height: supermanHeight,
 };
 
-//pipes
+// pipes
 let pipeArray = [];
-let pipeWidth = 60; //width/height ratio = 384/3072 = 1/8
+let pipeWidth = 60; // width/height ratio = 384/3072 = 1/8
 let pipeHeight = boardHeight / 1.6;
 let pipeX = boardWidth;
 let pipeY = 0;
@@ -28,13 +28,20 @@ let pipeY = 0;
 let topPipeImg;
 let bottomPipeImg;
 
-//physics
-let velocityX = -2; //pipes moving left speed
-let velocityY = 0; //superman jump speed
+// physics
+let velocityX = -2; // pipes moving left speed
+let velocityY = 0; // superman jump speed
 let gravity = 0.4;
 
 let gameOver = false;
 let score = 0;
+let audioBGM = new Audio("./gamebgm.mp3");
+audioBGM.volume = 0.2;
+
+// Game Over Form
+let gameoverContainer;
+let gameoverForm;
+let scoreInput;
 
 function velocityIncrement() {
   if (score >= 10) {
@@ -44,17 +51,13 @@ function velocityIncrement() {
 
 velocityIncrement();
 
-gameOverSound = new Audio("gameover.mp3");
-
-jumpSound = new Audio("jump.mp3");
-
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
   board.width = boardWidth;
-  context = board.getContext("2d"); //used for drawing on the board
+  context = board.getContext("2d");
 
-  //load images
+  // Load images
   supermanImg = new Image();
   supermanImg.src = "./super-arcade-pixels.png";
   supermanImg.onload = function () {
@@ -68,50 +71,48 @@ window.onload = function () {
   bottomPipeImg.src = "./bottompipe2.png";
 
   // Prompt to start the game
-  document.addEventListener("keydown", startGame);
-  window.addEventListener("click", startGame);
+  board.addEventListener("click", startGame);
   showPrompt();
-  
 };
 
-function startGame(e) {
-  if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX" || e.type === "click") {
-    // Remove the event listeners and start the game
-    document.removeEventListener("keydown", startGame);
-    window.removeEventListener("click", startGame);
-    document.removeEventListener("keydown", showPrompt);
-    window.removeEventListener("click", showPrompt);
-    // Initialize the game
-    superman.y = supermanY;
-    pipeArray = [];
-    score = 0;
-    gameOver = false;
+function startGame() {
+  // Remove the event listener and start the game
+  board.removeEventListener("click", startGame);
+  // Initialize the game
+  superman.y = supermanY;
+  pipeArray = [];
+  score = 0;
+  gameOver = false;
+  audioBGM.addEventListener("ended", function () {
+    audioBGM.currentTime = 0;
+    audioBGM.play();
+  });
 
-    // Start the game loop
-    requestAnimationFrame(update);
-    setInterval(placePipes, 1500); //every 1.5 seconds
+  audioBGM.play();
+  // Start the game loop
+  requestAnimationFrame(update);
+  setInterval(placePipes, 1500); // every 1.5 seconds
 
-    // Add event listeners for keydown and click to control the game
-    document.addEventListener("keydown", movesuperman);
-    window.addEventListener("click", movesuperman);
-  }
+  // Add event listener for keydown to control the game
+  document.addEventListener("keydown", movesuperman);
 }
 
 function showPrompt() {
   context.fillStyle = "white";
   context.font = "30px Minecrafter";
   context.textAlign = "center";
-  context.fillText("Press Space, Arrow Up, Mouse Click, or X to start the game", boardWidth / 2, boardHeight / 2);
+  context.fillText("Click anywhere to start the game", boardWidth / 2, boardHeight / 2);
 }
 
 function update() {
   requestAnimationFrame(update);
   if (gameOver) {
+    displayGameOverForm();
     return;
   }
   context.clearRect(0, 0, board.width, board.height);
 
-  //superman
+  // Superman
   velocityY += gravity;
   superman.y = Math.max(superman.y + velocityY, 0);
   context.drawImage(supermanImg, superman.x, superman.y, superman.width, superman.height);
@@ -120,16 +121,14 @@ function update() {
     gameOver = true;
   }
 
-  //pipes
+  // Pipes
   for (let i = 0; i < pipeArray.length; i++) {
     let pipe = pipeArray[i];
-    pipe.x += velocityX;
+    pipe.x += -2.4;
     context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
     if (!pipe.passed && superman.x > pipe.x + pipe.width) {
       score += 0.5;
-      jumpSound.volume = 0.2;
-      jumpSound.play();
       pipe.passed = true;
       velocityIncrement();
     }
@@ -139,73 +138,51 @@ function update() {
     }
   }
 
-  //clear pipes
+  // Clear pipes
   while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
-    pipeArray.shift(); //removes first element from the array
+    pipeArray.shift();
   }
 
-  //score
+  // Score
   context.fillStyle = "white";
-  context.stroke = "black";
   context.font = "45px MineCrafter";
-  context.fillText(score, 15, 45);
-
-  if (gameOver) {
-    gameOverSound.play();
-
-    let text = "Your score is " + score;
-    let textWidth = context.measureText(text).width;
-
-    let centerX = boardWidth / 2;
-    let centerY = boardHeight / 2;
-
-    let textX = centerX - textWidth / 2;
-    let textY = centerY;
-
-    context.textAlign = "center";
-    context.fillStyle = "white";
-    context.strokeStyle = "black";
-    context.lineWidth = "2";
-    context.fillText("GAME OVER", centerX, centerY - 50);
-    context.fillText(text, centerX, centerY);
-  }
+  context.fillText(score, 45, 60);
 }
 
 function placePipes() {
-    if (gameOver) {
-      return;
-    }
-  
-    let pipeHorizontalGap = 20; // Adjust the horizontal gap between pipes as needed
-    let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
-    let openingSpace = board.height / 4;
-  
-    let topPipe = {
-      img: topPipeImg,
-      x: pipeX,
-      y: randomPipeY,
-      width: pipeWidth,
-      height: pipeHeight,
-      passed: false,
-    };
-    pipeArray.push(topPipe);
-  
-    let bottomPipe = {
-      img: bottomPipeImg,
-      x: pipeX,
-      y: randomPipeY + pipeHeight + openingSpace,
-      width: pipeWidth,
-      height: pipeHeight,
-      passed: false,
-    };
-    pipeArray.push(bottomPipe);
-  
-    pipeX += pipeWidth + pipeHorizontalGap; // Adjust the pipeX value for the next set of pipes
+  if (gameOver) {
+    return;
   }
-  
+
+  let pipeHorizontalGap = 20; // Adjust the horizontal gap between pipes as needed
+  let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
+  let openingSpace = board.height / 4;
+
+  let topPipe = {
+    img: topPipeImg,
+    x: pipeX,
+    y: randomPipeY,
+    width: pipeWidth,
+    height: pipeHeight,
+    passed: false,
+  };
+  pipeArray.push(topPipe);
+
+  let bottomPipe = {
+    img: bottomPipeImg,
+    x: pipeX,
+    y: randomPipeY + pipeHeight + openingSpace,
+    width: pipeWidth,
+    height: pipeHeight,
+    passed: false,
+  };
+  pipeArray.push(bottomPipe);
+
+  pipeX; // Adjust the pipeX value for the next set of pipes
+}
 
 function movesuperman(e) {
-  if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX" || e.type === "click") {
+  if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
     velocityY = -6;
   }
 
@@ -215,42 +192,150 @@ function movesuperman(e) {
     score = 0;
     gameOver = false;
     document.addEventListener("keydown", startGame);
-    window.addEventListener("click", startGame);
-    document.removeEventListener("keydown", movesuperman);
-    window.removeEventListener("click", movesuperman);
     restartGame();
   }
 }
 
 function detectCollision(a, b) {
   return (
-    a.x < b.x + b.width && //a's top left corner doesn't reach b's top right corner
-    a.x + a.width > b.x && //a's top right corner passes b's top left corner
-    a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
-    a.y + a.height > b.y //a's bottom left corner passes b's top left corner
+    a.x < b.x + b.width && // a's top left corner doesn't reach b's top right corner
+    a.x + a.width > b.x && // a's top right corner passes b's top left corner
+    a.y < b.y + b.height && // a's top left corner doesn't reach b's bottom left corner
+    a.y + a.height > b.y // a's bottom left corner passes b's top left corner
   );
 }
 
-let isMuted = false;
+function restartGame() {
+  location.reload();
+}
 
-function toggleMute() {
-  if (isMuted) {
-    // Unmute the sounds
-    gameOverSound.muted = false;
-    jumpSound.muted = false;
-    isMuted = false;
-  } else {
-    // Mute the sounds
-    gameOverSound.muted = true;
-    jumpSound.muted = true;
-    isMuted = true;
+function displayGameOverForm() {
+  // Disable game controls
+  document.removeEventListener("keydown", movesuperman);
+
+  // Create the form container
+  let gameoverContainer = document.getElementById("gameover-container");
+  if (!gameoverContainer) {
+    gameoverContainer = document.createElement("div");
+    gameoverContainer.id = "gameover-container";
+    gameoverContainer.style.position = "absolute";
+    gameoverContainer.style.display = 'flex';
+    gameoverContainer.style.justifyContent = "center";
+    gameoverContainer.style.alignItems = "center";
+    gameoverContainer.style.top = "0";
+    gameoverContainer.style.left = "0";
+    gameoverContainer.style.width = "100vw";
+    gameoverContainer.style.height = "100vh";
+    gameoverContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    document.body.appendChild(gameoverContainer);
+  }
+
+  // Create the form elements
+  let gameoverForm = document.getElementById("gameover-form");
+  if (!gameoverForm) {
+    gameoverForm = document.createElement("form");
+    gameoverForm.id = "gameover-form";
+    gameoverForm.style.display = "flex";
+    gameoverForm.style.flexDirection = "column";
+    gameoverForm.style.alignItems = "center";
+    gameoverForm.style.justifyContent = "center";
+    gameoverForm.style.backgroundColor = "transparent";
+    gameoverForm.style.padding = "20px";
+
+    let title = document.createElement("h2");
+    title.textContent = "Game Over";
+
+    let nameLabel = document.createElement("label");
+    nameLabel.textContent = "Enter your name: ";
+    let nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "name";
+    nameInput.required = true;
+
+    let scoreLabel = document.createElement("label");
+    scoreLabel.textContent = "Score: ";
+    scoreInput = document.createElement("input");
+    scoreInput.type = "text";
+    scoreInput.name = "score";
+    scoreInput.value = score;
+    scoreInput.readOnly = true;
+
+    let submitButton = document.createElement("button");
+    submitButton.type = "submit";
+    submitButton.textContent = "Submit";
+
+    let skipButton = document.createElement("button");
+    skipButton.type = "button";
+    skipButton.textContent = "Skip";
+
+    let highScoresButton = document.createElement("button");
+    highScoresButton.type = "button";
+    highScoresButton.textContent = "View High Scores";
+
+    let mainMenuButton = document.createElement("button");
+    mainMenuButton.type = "button";
+    mainMenuButton.textContent = "Back to Main Menu";
+
+    // Append form elements
+    gameoverForm.appendChild(title);
+    gameoverForm.appendChild(nameLabel);
+    gameoverForm.appendChild(nameInput);
+    gameoverForm.appendChild(scoreLabel);
+    gameoverForm.appendChild(scoreInput);
+    gameoverForm.appendChild(submitButton);
+    gameoverForm.appendChild(skipButton);
+    gameoverForm.appendChild(highScoresButton);
+    gameoverForm.appendChild(mainMenuButton);
+
+    gameoverContainer.appendChild(gameoverForm);
+
+    // Add event listeners to the form and buttons
+    gameoverForm.addEventListener("submit", submitForm);
+    skipButton.addEventListener("click", skipToGame);
+    highScoresButton.addEventListener("click", viewHighScores);
+    mainMenuButton.addEventListener("click", backToMainMenu);
   }
 }
 
-let muteButton = document.getElementById("soundToggle");
-muteButton.addEventListener("click", toggleMute);
+function submitForm(e) {
+  e.preventDefault();
 
+  const playerName = e.target.elements.name.value;
+  const playerScore = e.target.elements.score.value;
 
-function restartGame() {
-    location.reload();
+  // Retrieve existing high scores from localStorage
+  const highScoresString = localStorage.getItem("highScores");
+  let highScores = [];
+
+  if (highScoresString) {
+    highScores = JSON.parse(highScoresString);
   }
+
+  // Add the current player's score to the high scores array
+  highScores.push({ name: playerName, score: playerScore });
+
+  // Sort high scores by score in descending order
+  highScores.sort((a, b) => b.score - a.score);
+
+  // Store the updated high scores array in localStorage
+  localStorage.setItem("highScores", JSON.stringify(highScores));
+
+  // Redirect to the high scores page
+  window.location.href = "game.html";
+}
+
+
+
+function skipToGame() {
+  // Redirect to the game page
+  window.location.href = "game.html";
+}
+
+function viewHighScores() {
+  // Redirect to the high scores page
+  window.location.href = "highscores.html";
+}
+function backToMainMenu() {
+  // Redirect to the high scores page
+  window.location.href = "index.html";
+}

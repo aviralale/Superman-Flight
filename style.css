@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 @font-face {
     font-family: Minecrafter;
     src: url('Minecrafter.Reg.ttf') format('truetype'); /* Replace 'path/to/font-file.otf' with the actual file path */
@@ -7,6 +9,7 @@ body {
     font-family:Minecrafter,sans-serif;
     text-align: center;
     color: red;
+    overflow-y: hidden;
 }
 
 #board {
@@ -27,3 +30,72 @@ html::-webkit-scrollbar{
     z-index: 10000;
     display: none;
 }
+
+button{
+        text-align:center;
+        cursor: pointer;
+        color: #efefef;
+        padding: 25px 80px;
+        width: 270px;
+        margin: 5px 30px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        background-color:rgb(38, 38, 38);
+        border: solid 1px transparent;
+        border-radius:10px;
+        -webkit-font-smoothing: antialiased;
+        transition: all 0.2s ease;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      button:hover{
+        background-color: rgb(56, 56, 56);
+      }
+
+      input:first-of-type{
+        text-align:center;
+        color: #efefef;
+        padding: 25px 80px;
+        width: 270px;
+        margin: 5px 30px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        font-size: 2rem;
+        font-family: Minecrafter,sans-serif;
+        outline: none;
+        position: relative;
+        background-color:rgb(38, 38, 38);
+        border: solid 1px transparent;
+        border-radius:10px;
+        -webkit-font-smoothing: antialiased;
+      }
+      input:last-of-type{
+        text-align:center;
+        color: #efefef;
+        width: 270px;
+        margin: 5px 0px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        font-size: 3rem;
+        font-family: Minecrafter,sans-serif;
+        outline: none;
+        position: relative;
+        background-color:transparent;
+        border: solid 1px transparent;
+        border-radius:10px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h2{
+        font-size: 5rem;
+        text-shadow: 1.5px 2px 1px rgb(241, 241, 241);
+      }
+
+      div{
+        transition: all 1s ease;
+      }
