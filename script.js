@@ -24,6 +24,7 @@ let pipeWidth = 60; // width/height ratio = 384/3072 = 1/8
 let pipeHeight = boardHeight / 1.6;
 let pipeX = boardWidth;
 let pipeY = 0;
+let pipeHorizontalGap = 20; // Adjust the horizontal gap between pipes as needed
 
 let topPipeImg;
 let bottomPipeImg;
@@ -32,7 +33,7 @@ let bottomPipeImg;
 let velocityX = -2; // pipes moving left speed
 let velocityY = 0; // superman jump speed
 let gravity = 0.4;
-
+let pipeVelocityX = -2;
 let gameOver = false;
 let score = 0;
 let audioBGM = new Audio("./gamebgm.mp3");
@@ -47,8 +48,7 @@ function velocityIncrement() {
   if (score >= 10) {
     velocityX = -2.4 + Math.floor(score / 10) * -0.4;
   }
-}
-
+};
 velocityIncrement();
 
 window.onload = function () {
@@ -99,7 +99,7 @@ function startGame() {
 
 function showPrompt() {
   context.fillStyle = "white";
-  context.font = "30px Minecrafter";
+  context.font = "1rem Minecrafter";
   context.textAlign = "center";
   context.fillText("Click anywhere to start the game", boardWidth / 2, boardHeight / 2);
 }
@@ -124,13 +124,12 @@ function update() {
   // Pipes
   for (let i = 0; i < pipeArray.length; i++) {
     let pipe = pipeArray[i];
-    pipe.x += -2.4;
+    pipe.x += pipeVelocityX;
     context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
     if (!pipe.passed && superman.x > pipe.x + pipe.width) {
       score += 0.5;
       pipe.passed = true;
-      velocityIncrement();
     }
 
     if (detectCollision(superman, pipe)) {
@@ -147,6 +146,9 @@ function update() {
   context.fillStyle = "white";
   context.font = "45px MineCrafter";
   context.fillText(score, 45, 60);
+
+  // Update velocity
+  velocityIncrement();
 }
 
 function placePipes() {
@@ -154,7 +156,7 @@ function placePipes() {
     return;
   }
 
-  let pipeHorizontalGap = 20; // Adjust the horizontal gap between pipes as needed
+  
   let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
   let openingSpace = board.height / 4;
 
@@ -178,8 +180,9 @@ function placePipes() {
   };
   pipeArray.push(bottomPipe);
 
-  pipeX; // Adjust the pipeX value for the next set of pipes
-}
+  }
+  pipeX += pipeWidth + pipeHorizontalGap; // Adjust the pipeX value for the next set of pipes
+
 
 function movesuperman(e) {
   if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
