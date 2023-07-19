@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: Minecrafter;
-    src: url('Minecrafter.Reg.ttf') format('truetype'); /* Replace 'path/to/font-file.otf' with the actual file path */
+    src: url('./media/Minecrafter.Reg.ttf') format('truetype'); /* Replace 'path/to/font-file.otf' with the actual file path */
   }
 
 body {
@@ -14,7 +14,7 @@ body {
 
 #board {
     /* background-color: skyblue; */
-    background-image: url("./bg.gif");
+    background-image: url("./media/bg.gif");
 }
 
 *{
@@ -98,4 +98,7 @@ button{
 
       div{
         transition: all 1s ease;
+      }
+      a,a>li{
+        color: white;
       }

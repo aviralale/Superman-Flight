@@ -24,20 +24,20 @@ let pipeWidth = 60; // width/height ratio = 384/3072 = 1/8
 let pipeHeight = boardHeight / 1.6;
 let pipeX = boardWidth;
 let pipeY = 0;
-let pipeHorizontalGap = 20; // Adjust the horizontal gap between pipes as needed
+let pipeHorizontalGap = 2; // Constant pipe x distance
 
 let topPipeImg;
 let bottomPipeImg;
 
 // physics
-let velocityX = -2; // pipes moving left speed
+let velocityX = -2.4; // Initial velocity of superman
 let velocityY = 0; // superman jump speed
 let gravity = 0.4;
-let pipeVelocityX = -2;
+let pipeVelocityX = -2.4;
 let gameOver = false;
 let score = 0;
-let audioBGM = new Audio("./gamebgm.mp3");
-audioBGM.volume = 0.2;
+let audioBGM = new Audio("./media/gamebgm.mp3");
+audioBGM.volume = 1;
 
 // Game Over Form
 let gameoverContainer;
@@ -45,11 +45,10 @@ let gameoverForm;
 let scoreInput;
 
 function velocityIncrement() {
-  if (score >= 10) {
-    velocityX = -2.4 + Math.floor(score / 10) * -0.4;
+  if (score >= 1 && score % 1 === 0) {
+    velocityX -= 0.4; // Increase velocityX by 0.4 every 1 score increase
   }
-};
-velocityIncrement();
+}
 
 window.onload = function () {
   board = document.getElementById("board");
@@ -59,21 +58,23 @@ window.onload = function () {
 
   // Load images
   supermanImg = new Image();
-  supermanImg.src = "./super-arcade-pixels.png";
+  supermanImg.src = "./media/super-arcade-pixels.png";
   supermanImg.onload = function () {
     context.drawImage(supermanImg, superman.x, superman.y, superman.width, superman.height);
   };
 
   topPipeImg = new Image();
-  topPipeImg.src = "./toppipe2.png";
+  topPipeImg.src = "./media/toppipe2.png";
 
   bottomPipeImg = new Image();
-  bottomPipeImg.src = "./bottompipe2.png";
+  bottomPipeImg.src = "./media/bottompipe2.png";
 
   // Prompt to start the game
   board.addEventListener("click", startGame);
   showPrompt();
 };
+
+
 
 function startGame() {
   // Remove the event listener and start the game
@@ -95,6 +96,8 @@ function startGame() {
 
   // Add event listener for keydown to control the game
   document.addEventListener("keydown", movesuperman);
+  // Add click event listener to move superman
+  board.addEventListener("click", movesuperman);
 }
 
 function showPrompt() {
@@ -124,12 +127,13 @@ function update() {
   // Pipes
   for (let i = 0; i < pipeArray.length; i++) {
     let pipe = pipeArray[i];
-    pipe.x += pipeVelocityX;
+    pipe.x += velocityX;
     context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
     if (!pipe.passed && superman.x > pipe.x + pipe.width) {
       score += 0.5;
       pipe.passed = true;
+      velocityIncrement();
     }
 
     if (detectCollision(superman, pipe)) {
@@ -146,9 +150,6 @@ function update() {
   context.fillStyle = "white";
   context.font = "45px MineCrafter";
   context.fillText(score, 45, 60);
-
-  // Update velocity
-  velocityIncrement();
 }
 
 function placePipes() {
@@ -156,7 +157,6 @@ function placePipes() {
     return;
   }
 
-  
   let randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2);
   let openingSpace = board.height / 4;
 
@@ -180,16 +180,15 @@ function placePipes() {
   };
   pipeArray.push(bottomPipe);
 
-  }
-  pipeX += pipeWidth + pipeHorizontalGap; // Adjust the pipeX value for the next set of pipes
+  pipeX = pipeX + pipeWidth + pipeHorizontalGap; // Update pipeX to include the pipe width and gap
 
+  velocityIncrement(); // Increase velocityX when placing pipes
+}
 
-function movesuperman(e) {
-  if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
+function movesuperman() {
+  if (!gameOver) {
     velocityY = -6;
-  }
-
-  if (gameOver) {
+  } else {
     superman.y = supermanY;
     pipeArray = [];
     score = 0;
@@ -222,7 +221,7 @@ function displayGameOverForm() {
     gameoverContainer = document.createElement("div");
     gameoverContainer.id = "gameover-container";
     gameoverContainer.style.position = "absolute";
-    gameoverContainer.style.display = 'flex';
+    gameoverContainer.style.display = "flex";
     gameoverContainer.style.justifyContent = "center";
     gameoverContainer.style.alignItems = "center";
     gameoverContainer.style.top = "0";
@@ -327,8 +326,6 @@ function submitForm(e) {
   window.location.href = "game.html";
 }
 
-
-
 function skipToGame() {
   // Redirect to the game page
   window.location.href = "game.html";
@@ -338,6 +335,7 @@ function viewHighScores() {
   // Redirect to the high scores page
   window.location.href = "highscores.html";
 }
+
 function backToMainMenu() {
   // Redirect to the high scores page
   window.location.href = "index.html";

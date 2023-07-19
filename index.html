@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
     <link href='//fonts.googleapis.com/css?family=Signika+Negative:300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="menu.css">
 </head>
@@ -33,11 +34,11 @@
         </div>
         <ol class="modal-body mx-4">
             <h5 class=" text-center creators">Creators</h5>
-          <li class="creators">Abiral Ale</li>
-          <li class="creators">Siddhartha Bajracharya</li>
-          <li class="creators">Gaurav Bhatta</li>
-          <li class="creators">Ritesh Aryal</li>
-          <li class="creators">Aditya Gautam</li>
+          <li class="creators"><a href="https://instagram.com/aviral.who_/" target="_blank">Abiral Ale</a></li>
+          <li class="creators"><a href="https://instagram.com/aaditya.gtm/" target="_blank">Aditya Gautam</a></li>
+          <li class="creators"><a href="https://instagram.com/gaurav_bhatta00/" target="_blank">Gaurav Bhatta</a></li>
+          <li class="creators"><a href="https://instagram.com/user1210426/" target="_blank">Ritesh Aryal</a></li>
+          <li class="creators"><a href="https://instagram.com/sid.bajra/" target="_blank">Siddhartha Bajracharya</a></li>
         </ol>
       </div>
     </div>
@@ -46,17 +47,12 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>
 <script>
-  var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  var audioElement = new Audio('./menubgm.mp3');
-  audioElement.volume = 0.35;
-  audioElement.addEventListener('canplaythrough', function() {
-    var source = audioContext.createMediaElementSource(audioElement);
-    var gainNode = audioContext.createGain();
-    source.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    source.loop = true;
-    
-    audioElement.play();
+  var audioBGM = new Audio('./menubgm.mp3');
+  window.onload = function (){
+
+    audioBGM.addEventListener("ended", function () {
+      audioBGM.currentTime = 0;
+      audioBGM.play();
   });
   
 </script>

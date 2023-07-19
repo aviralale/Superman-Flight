@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 @font-face {
     font-family: Minecrafter;
-    src: url('./Minecrafter.Reg.ttf') format('truetype'); /* Replace 'path/to/font-file.otf' with the actual file path */
+    src: url('./media/Minecrafter.Reg.ttf') format('truetype'); /* Replace 'path/to/font-file.otf' with the actual file path */
   }
 *{
     margin: 0;
@@ -14,7 +14,7 @@ html{
 body, html {
     font-family: 'Poppins', sans-serif;
     color:#efefef;
-    background: url('./bg.gif');
+    background: url('./media/bg.gif');
     background-size: cover;
     height:100vh;
     width: 100vw;
@@ -31,9 +31,13 @@ body, html {
     backdrop-filter: blur(3px);
     overflow: hidden;
   }
+  a{
+    cursor: url('./media/Resized_svg.svg');
+
+  }
   .btn {
     text-align:center;
-    cursor: pointer;
+    cursor: url('./media/Resized_svg.svg');
     color: #efefef;
     padding: 25px 80px;
     width: 270px;
