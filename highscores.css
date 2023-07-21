@@ -12,7 +12,7 @@
   }
   body{
     color: white;
-    background: url('./mediabg.gif');
+    background: url('./media/bg.gif');
     overflow-x: hidden;
     font-family: 'Poppins', sans-serif;
 }
