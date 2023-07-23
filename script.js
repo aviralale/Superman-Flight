@@ -1,10 +1,12 @@
-// board
+// game.js
+
+// Board
 let board;
 let boardWidth = window.innerWidth;
 let boardHeight = window.innerHeight;
 let context;
 
-// superman
+// Superman
 let supermanWidth = 60; // width/height ratio = 408/228 = 17/12
 let supermanHeight = 30;
 let supermanX = boardWidth / 8;
@@ -18,7 +20,7 @@ let superman = {
   height: supermanHeight,
 };
 
-// pipes
+// Pipes
 let pipeArray = [];
 let pipeWidth = 60; // width/height ratio = 384/3072 = 1/8
 let pipeHeight = boardHeight / 1.6;
@@ -29,9 +31,9 @@ let pipeHorizontalGap = 2; // Constant pipe x distance
 let topPipeImg;
 let bottomPipeImg;
 
-// physics
-let velocityX = -2.4; // Initial velocity of superman
-let velocityY = 0; // superman jump speed
+// Physics
+let velocityX = -2.8; // Initial velocity of Superman
+let velocityY = 0; // Superman jump speed
 let gravity = 0.4;
 let pipeVelocityX = -2.4;
 let gameOver = false;
@@ -50,31 +52,28 @@ function velocityIncrement() {
   }
 }
 
-window.onload = function () {
+function setupCanvas() {
   board = document.getElementById("board");
   board.height = boardHeight;
   board.width = boardWidth;
   context = board.getContext("2d");
+}
 
-  // Load images
-  supermanImg = new Image();
-  supermanImg.src = "./media/super-arcade-pixels.png";
-  supermanImg.onload = function () {
-    context.drawImage(supermanImg, superman.x, superman.y, superman.width, superman.height);
-  };
-
-  topPipeImg = new Image();
-  topPipeImg.src = "./media/toppipe2.png";
-
-  bottomPipeImg = new Image();
-  bottomPipeImg.src = "./media/bottompipe2.png";
-
-  // Prompt to start the game
-  board.addEventListener("click", startGame);
-  showPrompt();
-};
-
-
+function preloadImages() {
+  return new Promise((resolve, reject) => {
+    supermanImg = new Image();
+    supermanImg.src = "./media/super-arcade-pixels.png";
+    supermanImg.onload = function () {
+      topPipeImg = new Image();
+      topPipeImg.src = "./media/toppipe2.png";
+      topPipeImg.onload = function () {
+        bottomPipeImg = new Image();
+        bottomPipeImg.src = "./media/bottompipe2.png";
+        bottomPipeImg.onload = resolve;
+      };
+    };
+  });
+}
 
 function startGame() {
   // Remove the event listener and start the game
@@ -337,6 +336,15 @@ function viewHighScores() {
 }
 
 function backToMainMenu() {
-  // Redirect to the high scores page
+  // Redirect to the main menu page
   window.location.href = "index.html";
 }
+
+async function initializeGame() {
+  setupCanvas();
+  await preloadImages();
+  showPrompt();
+  board.addEventListener("click", startGame);
+}
+
+initializeGame();
